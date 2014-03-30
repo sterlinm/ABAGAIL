@@ -45,4 +45,10 @@ public class NeuralNetworkTester implements Tester {
             }
         }
     }
+
+    // @Override
+    public TestMetric getMetric(int i) {
+        return this.metrics[i];
+    }
+
 }

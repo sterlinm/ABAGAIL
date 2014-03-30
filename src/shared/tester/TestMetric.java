@@ -28,4 +28,10 @@ public interface TestMetric {
      * 
      */
     public void printResults();
+
+    public double getResult();
+
+    /**
+    * Return the value of the result collected by this test metric.
+    */
 }
