@@ -1,0 +1,41 @@
+
+Error results for RHC
+---------------------------
+
+Error results for SA
+---------------------------
+
+Error results for GA
+---------------------------
+
+Results for BackProp (Training):
+Correctly Classified Instances: 37.78%
+Incorrectly Classified Instances: 62.22%
+
+Results for BackProp (Test):
+Correctly Classified Instances: 31.43%
+Incorrectly Classified Instances: 68.57%
+
+Results for RHC (Training):
+Correctly Classified Instances: 37.78%
+Incorrectly Classified Instances: 62.22%
+
+Results for RHC (Test):
+Correctly Classified Instances: 31.43%
+Incorrectly Classified Instances: 68.57%
+
+Results for SA (Training):
+Correctly Classified Instances: 37.78%
+Incorrectly Classified Instances: 62.22%
+
+Results for SA (Test):
+Correctly Classified Instances: 31.43%
+Incorrectly Classified Instances: 68.57%
+
+Results for GA (Training):
+Correctly Classified Instances: 37.78%
+Incorrectly Classified Instances: 62.22%
+
+Results for GA (Test):
+Correctly Classified Instances: 31.43%
+Incorrectly Classified Instances: 68.57%

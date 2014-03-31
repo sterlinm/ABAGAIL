@@ -22,10 +22,12 @@ import java.text.*;
  */
 
 public class Assignment02 {
-	// Get SPAM Data
+	// Get Data
     private static DataSet[] spamDatasets = getSpamData();
-    private static DataSet spamTrain = spamDatasets[0];
-    private static DataSet spamTest = spamDatasets[1];
+    private static DataSet[] glassDatasets = getGlassData();
+    private static DataSet trainDS;
+    private static DataSet valDS;
+    private static DataSet testDS;
 
     // General Neural Network Settings
     private static BackPropagationNetworkFactory factory = new BackPropagationNetworkFactory();
@@ -34,31 +36,59 @@ public class Assignment02 {
     private static OptimizationAlgorithm[] oa = new OptimizationAlgorithm[3];
     private static String[] oaNames = {"BackProp", "RHC", "SA", "GA"};
     private static DecimalFormat df = new DecimalFormat("0.000");
-
-    // SPAM Neural Network Settings
-    private static BackPropagationNetwork spamNetworks[] = new BackPropagationNetwork[4];
-    private static NeuralNetworkTester[] spamNetTesters = new NeuralNetworkTester[4];
-    private static int spamInputLayer = 57, spamHiddenLayer = 14, spamOutputLayer = 1, spamTrainingIterations = 1000;  
+    private static BackPropagationNetwork networks[] = new BackPropagationNetwork[4];
+    private static int inputLayer, hiddenLayer, outputLayer, numIters = 1000;  
 
     /**
      * The test main
      * @param args ignored parameters
      */
     public static void main(String[] args) throws Exception {
+        //Spam Data
+        trainDS = spamDatasets[0];
+        valDS = spamDatasets[1];
+        testDS = spamDatasets[2];
+        inputLayer = 57;
+        hiddenLayer = 14;
+        outputLayer = 1;
 
-        // Spam Network - Backpropagation
-        spamNetworks[0] = factory.createClassificationNetwork(
-           new int[] {spamInputLayer, spamHiddenLayer, spamOutputLayer});
+        // Glass Data
+        // trainDS = glassDatasets[0];
+        // valDS = glassDatasets[1];
+        // testDS = glassDatasets[2];
+        // inputLayer = 9;
+        // hiddenLayer = 10;
+        // outputLayer = 1;
+
+        // Experiment with number of nodes
+        int maxNodes = 20;
+        double nodeTestPerformance[] = new double[maxNodes];
+        System.out.println("\nVarying the number of nodes in the hidden layer...\n---------------------------");
+        for (int i = 1; i <= maxNodes; i++) {
+            networks[0] = factory.createClassificationNetwork(
+                new int[] {inputLayer, i, outputLayer});
+            ConvergenceTrainer trainer = new ConvergenceTrainer(
+                new BatchBackPropagationTrainer(trainDS, networks[0],
+                    new SumOfSquaresError(), new RPROPUpdateRule()),1E-10,numIters);
+            trainer.train();
+            TestMetric nodeTrainResults = printNNetResults(networks[0], trainDS.getInstances());
+            TestMetric nodeValResults = printNNetResults(networks[0], valDS.getInstances());
+            System.out.println(i + "\t" + df.format(nodeTrainResults.getResult()) + "\t" + df.format(nodeValResults.getResult()));
+        }
+
+        // Backpropagation
+        networks[0] = factory.createClassificationNetwork(
+           new int[] {inputLayer, hiddenLayer, outputLayer});
         ConvergenceTrainer trainer = new ConvergenceTrainer(
-            new BatchBackPropagationTrainer(spamTrain, spamNetworks[0],
-                new SumOfSquaresError(), new RPROPUpdateRule()),1E-10,spamTrainingIterations);
+            new BatchBackPropagationTrainer(trainDS, networks[0],
+                new SumOfSquaresError(), new RPROPUpdateRule()),1E-10,numIters);
         trainer.train();
 
-        // Spambase Network - Optimization Algorithms
+        // Optimization Algorithms
         for(int i = 0; i < oa.length; i++) {
-            spamNetworks[i+1] = factory.createClassificationNetwork(
-                new int[] {spamInputLayer, spamHiddenLayer, spamOutputLayer});
-            nnop[i] = new NeuralNetworkOptimizationProblem(spamTrain, spamNetworks[i+1], measure);
+            networks[i+1] = factory.createClassificationNetwork(
+                new int[] {inputLayer, hiddenLayer, outputLayer});
+            nnop[i] = new NeuralNetworkOptimizationProblem(trainDS, networks[i+1], measure);
         }
 
         oa[0] = new RandomizedHillClimbing(nnop[0]);
@@ -66,19 +96,19 @@ public class Assignment02 {
         oa[2] = new StandardGeneticAlgorithm(200, 100, 10, nnop[2]);
 
         for(int i = 0; i < oa.length; i++) {
-            train(oa[i], spamNetworks[i+1], oaNames[i+1], 1000, spamTrain.getInstances(), spamTest.getInstances(),true);
+            train(oa[i], networks[i+1], oaNames[i+1], 1000, trainDS.getInstances(), testDS.getInstances(),false);
 
             Instance optimalInstance = oa[i].getOptimal();
-            spamNetworks[i+1].setWeights(optimalInstance.getData());
+            networks[i+1].setWeights(optimalInstance.getData());
 
         }
 
-        for(int i = 0; i < spamNetworks.length; i++) {
-            TestMetric trainResults = printNNetResults(spamNetworks[i], spamTrain.getInstances());
+        for(int i = 0; i < networks.length; i++) {
+            TestMetric trainResults = printNNetResults(networks[i], trainDS.getInstances());
             System.out.println("\nResults for " + oaNames[i] + " (Training):");
             trainResults.printResults();
 
-            TestMetric testResults = printNNetResults(spamNetworks[i], spamTest.getInstances());
+            TestMetric testResults = printNNetResults(networks[i], testDS.getInstances());
             System.out.println("\nResults for " + oaNames[i] + " (Test):");
             testResults.printResults();
         }
@@ -93,7 +123,9 @@ public class Assignment02 {
     }
 
     private static void train(OptimizationAlgorithm oa, BackPropagationNetwork network, String oaName, double numIters, Instance[] trainInstances, Instance[] testInstances, Boolean printFlag) {
-        System.out.println("\nError results for " + oaName + "\n---------------------------");
+        if (printFlag) {
+            System.out.println("\nError results for " + oaName + "\n---------------------------");
+        }
 
         for(int i = 0; i < numIters; i++) {
             oa.train();
@@ -119,7 +151,8 @@ public class Assignment02 {
 
     private static DataSet[] getSpamData() {
 
-        DataSet[] ds = new DataSet[2];
+        DataSet[] ds = new DataSet[3];
+        DataSet tempDS;
 
         double[][][] attributes = new double[4601][][];
 
@@ -152,14 +185,63 @@ public class Assignment02 {
             instances[i].setLabel(new Instance(attributes[i][1][0]));
         }
 
-        DataSet spamDS = new DataSet(instances);
-        TestTrainSplitFilter ttf = new TestTrainSplitFilter(30);
-        ttf.filter(spamDS);
-        DataSet spamTrain = ttf.getTrainingSet();
-        DataSet spamTest = ttf.getTestingSet();
+        DataSet allDS = new DataSet(instances);
+        TestTrainSplitFilter ttf = new TestTrainSplitFilter(40);
+        ttf.filter(allDS);
+        ds[0] = ttf.getTrainingSet(); // training set
+        tempDS = ttf.getTestingSet();
+        ttf = new TestTrainSplitFilter(50);
+        ttf.filter(tempDS);
+        ds[1] = ttf.getTrainingSet(); // validation set
+        ds[2] = ttf.getTestingSet(); // test set
 
-        ds[0] = spamTrain;
-        ds[1] = spamTest;
+        return ds;
+    }
+
+    private static DataSet[] getGlassData() {
+
+        DataSet[] ds = new DataSet[3];
+        DataSet tempDS;
+
+        double[][][] attributes = new double[214][][];
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File("src/opt/test/glassData.csv")));
+
+            for(int i = 0; i < attributes.length; i++) {
+                Scanner scan = new Scanner(br.readLine());
+                scan.useDelimiter(",");
+
+                attributes[i] = new double[2][];
+                attributes[i][0] = new double[9]; // 9 attributes
+                attributes[i][1] = new double[1];
+
+                for(int j = 0; j < 9; j++)
+                    attributes[i][0][j] = Double.parseDouble(scan.next());
+
+                attributes[i][1][0] = Double.parseDouble(scan.next());
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        Instance[] instances = new Instance[attributes.length];
+
+        for(int i = 0; i < instances.length; i++) {
+            instances[i] = new Instance(attributes[i][0]);
+            instances[i].setLabel(new Instance(attributes[i][1][0]));
+        }
+
+        DataSet allDS = new DataSet(instances);
+        TestTrainSplitFilter ttf = new TestTrainSplitFilter(40);
+        ttf.filter(allDS);
+        ds[0] = ttf.getTrainingSet(); // training set
+        tempDS = ttf.getTestingSet();
+        ttf = new TestTrainSplitFilter(50);
+        ttf.filter(tempDS);
+        ds[1] = ttf.getTrainingSet(); // validation set
+        ds[2] = ttf.getTestingSet(); // test set
 
         return ds;
     }

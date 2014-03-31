@@ -19,10 +19,10 @@ import java.text.*;
  * @author Hannah Lau
  * @version 1.0
  */
-public class AbaloneTest {
+public class Assignment02_old {
     private static Instance[] instances = initializeInstances();
 
-    private static int inputLayer = 57, hiddenLayer = 5, outputLayer = 1, trainingIterations = 1000;
+    private static int inputLayer = 57, hiddenLayer = 14, outputLayer = 1, trainingIterations = 1000;
     private static BackPropagationNetworkFactory factory = new BackPropagationNetworkFactory();
     
     private static ErrorMeasure measure = new SumOfSquaresError();
@@ -35,10 +35,46 @@ public class AbaloneTest {
     private static OptimizationAlgorithm[] oa = new OptimizationAlgorithm[3];
     private static String[] oaNames = {"RHC", "SA", "GA"};
     private static String results = "";
+    private static String results1 = "";
 
     private static DecimalFormat df = new DecimalFormat("0.000");
 
     public static void main(String[] args) {
+        // BackPropagationNetworkFactory factory = 
+        //     new BackPropagationNetworkFactory();
+
+        // BackPropagationNetwork networkTmp = factory.createClassificationNetwork(
+        //    new int[] {inputLayer, hiddenLayer, outputLayer});
+        // // DataSet setTmp = new DataSet(set);
+        // ConvergenceTrainer trainerTmp = new ConvergenceTrainer(
+        //        new BatchBackPropagationTrainer(set, networkTmp,
+        //            new SumOfSquaresError(), new RPROPUpdateRule()));
+        // trainerTmp.train();
+        // // System.out.println("Convergence in " 
+        // //     + trainerTmp.getIterations() + " iterations");
+
+        // double predicted1, actual1;
+        // double correct1 = 0, incorrect1 = 0;
+
+        // System.out.println(instances.length);
+
+        // for (int i = 0; i < instances.length; i++) {
+        //     networkTmp.setInputValues(instances[i].getData());
+        //     networkTmp.run();
+
+        //     predicted1 = Double.parseDouble(instances[i].getLabel().toString());
+        //     actual1 = Double.parseDouble(networkTmp.getOutputValues().toString());
+
+        //     double trash = Math.abs(predicted1 - actual1) < 0.5 ? correct1++ : incorrect1++;
+        // }
+
+        //     results1 +=  "\nResults for Backprop: \nCorrectly classified " + correct1 + " instances." +
+        //                 "\nIncorrectly classified " + incorrect1 + " instances.\nPercent correctly classified: "
+        //                 + df.format(correct1/(correct1+incorrect1)*100);
+
+        //     System.out.println(results1);
+
+
         for(int i = 0; i < oa.length; i++) {
             networks[i] = factory.createClassificationNetwork(
                 new int[] {inputLayer, hiddenLayer, outputLayer});
