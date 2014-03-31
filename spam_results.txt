@@ -1,0 +1,55 @@
+
+Varying the number of nodes in the hidden layer...
+---------------------------
+1	0.832	0.808
+2	0.947	0.913
+3	0.967	0.930
+4	0.962	0.917
+5	0.977	0.914
+6	0.980	0.920
+7	0.964	0.925
+8	0.976	0.925
+9	0.975	0.914
+10	0.981	0.917
+11	0.982	0.926
+12	0.979	0.931
+13	0.979	0.927
+14	0.988	0.912
+15	0.985	0.920
+16	0.984	0.925
+17	0.999	0.912
+18	0.996	0.925
+19	0.991	0.924
+20	0.992	0.925
+
+Results for BackProp (Training):
+Correctly Classified Instances: 98.64%
+Incorrectly Classified Instances: 1.36%
+
+Results for BackProp (Test):
+Correctly Classified Instances: 92.47%
+Incorrectly Classified Instances: 7.53%
+
+Results for RHC (Training):
+Correctly Classified Instances: 59.08%
+Incorrectly Classified Instances: 40.92%
+
+Results for RHC (Test):
+Correctly Classified Instances: 59.16%
+Incorrectly Classified Instances: 40.84%
+
+Results for SA (Training):
+Correctly Classified Instances: 67.55%
+Incorrectly Classified Instances: 32.45%
+
+Results for SA (Test):
+Correctly Classified Instances: 67.27%
+Incorrectly Classified Instances: 32.73%
+
+Results for GA (Training):
+Correctly Classified Instances: 66.36%
+Incorrectly Classified Instances: 33.64%
+
+Results for GA (Test):
+Correctly Classified Instances: 66.76%
+Incorrectly Classified Instances: 33.24%
