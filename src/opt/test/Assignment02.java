@@ -45,20 +45,20 @@ public class Assignment02 {
      */
     public static void main(String[] args) throws Exception {
         //Spam Data
-        // trainDS = spamDatasets[0];
-        // valDS = spamDatasets[1];
-        // testDS = spamDatasets[2];
-        // inputLayer = 57;
-        // hiddenLayer = 14;
-        // outputLayer = 1;
+        trainDS = spamDatasets[0];
+        valDS = spamDatasets[1];
+        testDS = spamDatasets[2];
+        inputLayer = 57;
+        hiddenLayer = 14;
+        outputLayer = 1;
 
         // Glass Data
-        trainDS = glassDatasets[0];
-        valDS = glassDatasets[1];
-        testDS = glassDatasets[2];
-        inputLayer = 9;
-        hiddenLayer = 10;
-        outputLayer = 1;
+        // trainDS = glassDatasets[0];
+        // valDS = glassDatasets[1];
+        // testDS = glassDatasets[2];
+        // inputLayer = 9;
+        // hiddenLayer = 10;
+        // outputLayer = 1;
 
         // Experiment with number of nodes
         int maxNodes = 20;
@@ -92,8 +92,8 @@ public class Assignment02 {
         }
 
         oa[0] = new RandomizedHillClimbing(nnop[0]);
-        oa[1] = new SimulatedAnnealing(1E11, .95, nnop[1]);
-        oa[2] = new StandardGeneticAlgorithm(200, 100, 10, nnop[2]);
+        oa[1] = new SimulatedAnnealing(500, .95, nnop[1]);
+        oa[2] = new StandardGeneticAlgorithm(250, 100, 10, nnop[2]);
 
         for(int i = 0; i < oa.length; i++) {
             train(oa[i], networks[i+1], oaNames[i+1], 1000, trainDS.getInstances(), testDS.getInstances(),true);
